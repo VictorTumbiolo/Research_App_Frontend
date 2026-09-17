@@ -1,0 +1,636 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Libre+Franklin:wght@400;500;600&display=swap');
+
+:root {
+  --beige-wall: #ddc8a1;
+  --beige-wall-deep: #c9ae7e;
+  --glass-tint: rgba(250, 243, 227, 0.5);
+  --glass-tint-strong: rgba(250, 243, 227, 0.68);
+  --glass-edge: rgba(255, 255, 255, 0.55);
+  --coffee-dark: #3b2a1e;
+  --coffee-mid: #6b4226;
+  --brass: #a9793b;
+  --brass-soft: rgba(169, 121, 59, 0.35);
+  --cream-paper: #f5ecd9;
+  --text-ink: #33241a;
+  --muted-ink: #86735c;
+  --error: #a3402c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* The site-wide index.css caps #root at 1126px, centers it with margin,
+   adds a 1px border-inline, and center-aligns text — all meant for the
+   blog/docs pages elsewhere on the site. Cancel every one of those
+   properties here so this app fills the full viewport instead. */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  max-width: none;
+  min-height: 100vh;
+  border-inline: none;
+  text-align: left;
+  display: block;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  letter-spacing: normal;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12) 0, transparent 45%),
+    linear-gradient(160deg, var(--beige-wall) 0%, var(--beige-wall-deep) 100%);
+  color: var(--text-ink);
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+/* Header reads as a hanging awning over a shop window */
+.app-header {
+  position: relative;
+  padding: 0.5rem 1.5rem;
+  background: var(--coffee-dark);
+  box-shadow: inset 0 -3px 0 var(--brass);
+}
+
+.app-header::before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(169, 121, 59, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.app-header h1 {
+  margin: 0 0 0 2.4rem;
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  color: var(--cream-paper);
+}
+
+.app-header p {
+  margin: 0.1rem 0 0 2.4rem;
+  color: #c7ac8a;
+  font-size: 0.72rem;
+}
+
+/* Main area is the window frame; the beige wall shows as the mullion */
+.app-main {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  padding: 3px 3px 0;
+  overflow: hidden;
+}
+
+/* Shared glass-pane treatment */
+.chat-panel,
+.details-panel,
+.paper-viewer-panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--glass-tint);
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+
+.chat-panel::before,
+.details-panel::before,
+.paper-viewer-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0) 22%,
+    rgba(255, 255, 255, 0) 78%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+/* Paper viewer panel — the open book on the left */
+.paper-viewer-panel {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: 10px 10px 0 0;
+  border-top: 1px solid var(--glass-edge);
+}
+
+/* Iframes swallow mouse events, which would break a drag mid-motion —
+   disable pointer events on it while the handle is being dragged. */
+.paper-viewer-panel.resizing .paper-viewer-body iframe {
+  pointer-events: none;
+}
+
+/* Draggable seam between the paper viewer and the chat panel */
+.resize-handle {
+  flex: 0 0 6px;
+  align-self: stretch;
+  cursor: col-resize;
+  position: relative;
+}
+
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 36px;
+  border-radius: 3px;
+  background: var(--brass-soft);
+  transition: background 0.15s ease;
+}
+
+.resize-handle:hover::after,
+.resize-handle.active::after {
+  background: var(--brass);
+}
+
+.paper-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--brass-soft);
+  background: rgba(59, 42, 30, 0.05);
+}
+
+.paper-viewer-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--coffee-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.paper-viewer-close {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brass);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--coffee-dark);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.paper-viewer-close:hover {
+  background: var(--coffee-dark);
+  color: var(--cream-paper);
+}
+
+.paper-viewer-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.paper-viewer-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #fff;
+}
+
+/* Chat panel */
+.chat-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: 10px 10px 0 0;
+  border-top: 1px solid var(--glass-edge);
+  color: var(--text-ink);
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chat-bubble {
+  max-width: 65%;
+  padding: 0.75rem 1.1rem;
+  border-radius: 4px 14px 14px 14px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  animation: settle 0.22s ease-out;
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background: var(--coffee-dark);
+  color: var(--cream-paper);
+  border-radius: 14px 4px 14px 14px;
+}
+
+.chat-bubble.assistant {
+  align-self: flex-start;
+  background: var(--cream-paper);
+  color: var(--text-ink);
+  border: 1px solid var(--brass-soft);
+}
+
+.chat-bubble.assistant p {
+  margin: 0 0 0.6em;
+}
+
+.chat-bubble.assistant p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-bubble.assistant strong {
+  color: var(--coffee-dark);
+  font-weight: 600;
+}
+
+.chat-bubble.assistant ul,
+.chat-bubble.assistant ol {
+  margin: 0 0 0.6em;
+  padding-left: 1.25em;
+}
+
+.chat-bubble.assistant li {
+  margin-bottom: 0.25em;
+}
+
+.chat-bubble.assistant li:last-child {
+  margin-bottom: 0;
+}
+
+.chat-bubble.assistant code {
+  background: rgba(59, 42, 30, 0.08);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.chat-bubble.assistant h1,
+.chat-bubble.assistant h2,
+.chat-bubble.assistant h3,
+.chat-bubble.assistant h4,
+.chat-bubble.assistant h5,
+.chat-bubble.assistant h6 {
+  color: var(--coffee-dark);
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  line-height: 1.3;
+  margin: 0.7em 0 0.3em;
+}
+
+.chat-bubble.assistant h1 {
+  font-size: 1.15em;
+}
+
+.chat-bubble.assistant h2 {
+  font-size: 1.08em;
+}
+
+.chat-bubble.assistant h3,
+.chat-bubble.assistant h4,
+.chat-bubble.assistant h5,
+.chat-bubble.assistant h6 {
+  font-size: 1em;
+}
+
+.chat-bubble.assistant > *:first-child {
+  margin-top: 0;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: rgba(59, 42, 30, 0.06);
+  border-top: 1px solid var(--brass-soft);
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--brass-soft);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--text-ink);
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.95rem;
+}
+
+.chat-input::placeholder {
+  color: var(--muted-ink);
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(169, 121, 59, 0.18);
+}
+
+.chat-send-button {
+  padding: 0.65rem 1.4rem;
+  background: var(--coffee-mid);
+  color: var(--cream-paper);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.15s ease;
+}
+
+.chat-send-button:hover {
+  background: var(--coffee-dark);
+}
+
+.chat-send-button:focus-visible,
+.chat-input:focus-visible,
+.upload-button:focus-within,
+.run-button:focus-visible,
+.paper-viewer-close:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+/* Wrapper that lets the papers panel collapse while keeping a visible
+   handle to bring it back */
+.papers-sidebar {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  transition: flex-basis 0.25s ease, flex-grow 0.25s ease;
+}
+
+.papers-sidebar.collapsed {
+  flex: 0 0 18px;
+}
+
+.papers-sidebar.collapsed .details-panel {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  left: -13px;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 26px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brass);
+  border-radius: 8px;
+  background: var(--cream-paper);
+  color: var(--coffee-dark);
+  cursor: pointer;
+  box-shadow: 1px 2px 4px rgba(59, 42, 30, 0.25);
+  transition: background 0.15s ease, left 0.25s ease;
+}
+
+.sidebar-toggle:hover {
+  background: #efe0c2;
+}
+
+.sidebar-toggle-arrow {
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.25s ease;
+  display: inline-block;
+}
+
+.papers-sidebar.collapsed .sidebar-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* Details / papers panel — reads like a small shelf of index cards */
+.details-panel {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.5rem;
+  border-radius: 10px 10px 0 0;
+  border-top: 1px solid var(--glass-edge);
+  background: var(--glass-tint-strong);
+  transition: opacity 0.15s ease;
+}
+
+.details-panel h2 {
+  margin: 0 0 1rem;
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--coffee-dark);
+}
+
+.paper-list-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.paper-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.paper-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 3px 6px 6px 3px;
+  background: var(--cream-paper);
+  border: 1px solid var(--brass-soft);
+  border-left: 4px solid var(--brass);
+  box-shadow: 1px 1px 0 rgba(59, 42, 30, 0.06);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.paper-remove {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted-ink);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.paper-remove:hover {
+  background: var(--error);
+  color: var(--cream-paper);
+}
+
+.paper-card:hover {
+  background: #efe0c2;
+}
+
+.paper-card:active {
+  transform: scale(0.99);
+}
+
+.paper-card.selected {
+  background: #ecdcb9;
+  border-left-color: var(--coffee-dark);
+  border-color: var(--coffee-mid);
+}
+
+.paper-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.88rem;
+  color: var(--text-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.details-panel-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--brass-soft);
+}
+
+.upload-button {
+  text-align: center;
+  padding: 0.7rem 1.5rem;
+  background: transparent;
+  color: var(--coffee-dark);
+  border: 1px solid var(--brass);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.upload-button:hover {
+  background: var(--coffee-dark);
+  color: var(--cream-paper);
+}
+
+.run-button {
+  padding: 0.75rem;
+  background: var(--brass);
+  color: #2b1d12;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.run-button:hover:not(:disabled) {
+  background: #93672f;
+}
+
+.run-button:disabled {
+  background: #b9ab93;
+  color: #6a5c48;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+.placeholder-text {
+  color: var(--muted-ink);
+  font-style: italic;
+}
+
+/* Thin, warm scrollbars in the glass panes */
+.chat-messages::-webkit-scrollbar,
+.paper-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+.paper-list-container::-webkit-scrollbar-thumb {
+  background: var(--brass-soft);
+  border-radius: 4px;
+}
+
+@media (max-width: 720px) {
+  .app-main {
+    flex-direction: column;
+  }
+
+  .chat-panel,
+  .details-panel,
+  .paper-viewer-panel {
+    border-radius: 10px;
+  }
+
+  .paper-viewer-panel {
+    max-height: 45vh;
+  }
+}
