@@ -10,6 +10,8 @@ export interface QueryResponse {
   received: string
   searches?: string[]
   searched?: boolean
+  tokens_used?: number
+  total_tokens?: number
 }
 
 export async function sendQuestion(
