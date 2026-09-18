@@ -160,12 +160,12 @@ export function AboutPage() {
           <h2>Use Case</h2>
           <p>
             This tool helps students and researchers understand academic papers while
-            significantly reducing token usage compared to a standard chatbot session.
-            A user uploads a paper, which — if the system hasn't seen it before — gets
-            chunked and embedded into a vector database. When a question is asked, the
+            reducing token usage compared to a standard chatbot session.
+            A user uploads a paper, which gets chunked and embedded into a vector database.
+            When a question is asked, the
             LLM searches that database for the most relevant chunks rather than
             reading the entire paper. This typically uses about a third of the tokens
-            a full-paper approach would require, while preserving contextual clarity
+            a full paper approach would require, while preserving contextual clarity
             in the response.
           </p>
         </section>
@@ -205,8 +205,7 @@ export function AboutPage() {
             </li>
             <li>
               Vector search: cosine similarity via Qdrant, filtered per-paper by
-              filename so questions only search within the selected paper, not across
-              the whole corpus
+              filename so questions only search within the selected paper
             </li>
           </ul>
 
@@ -221,11 +220,11 @@ export function AboutPage() {
               point 2"), and only searches for questions that need new content
             </li>
             <li>
-              Multi-round tool use (up to 3 rounds) — can search, evaluate results,
+              Multi-round tool use: can search, evaluate results,
               and search again with a refined query if needed
             </li>
             <li>
-              Query rewriting — the system prompt has Claude convert conversational
+              Query rewriting: the system prompt has Claude convert conversational
               references ("that", "point 2") into standalone search queries before
               hitting the vector store
             </li>
@@ -239,12 +238,9 @@ export function AboutPage() {
           </p>
           <p className="chunk-test-note">
             The 15%, 25%, and 33% runs retrieve only the most relevant chunks for the
-            question via vector search. The 100% run is a separate baseline — the full
-            paper reassembled in its original reading order with no retrieval at all —
-            included for comparison, not as a fourth retrieval tier. Note that the 25%
-            run surfaced the paper's two-stage prediction-matrix methodology as its own
-            section; the core findings (fault detection results, deployability numbers)
-            stay consistent across every tier regardless.
+            question via vector search. The 100% run is a separate baseline: the full
+            paper reassembled in its original reading order with no retrieval at all. This is
+            included for comparison. 
           </p>
 
           <div className="chunk-test-results">
@@ -272,18 +268,17 @@ export function AboutPage() {
   <p>
     The current version handles one paper at a time. The natural next step is
     extending the same retrieval approach to <em>clusters</em> of related
-    papers — understanding not just what each paper says, but how papers
-    relate to each other.
+    papers, understanding how papers
+    relate to each other in addition to what each papers own context.
   </p>
 
   <h3 className="about-subsection-title">Flow 2: Literature Review Assistant</h3>
   <p>
     A RAG system over a small cluster of related papers, built for a
-    researcher conducting a systematic literature review. Rather than
-    treating each paper in isolation, the system would understand each
-    paper's core concepts and how they relate across the cluster —
+    researcher conducting a systematic literature review. The system would understand each
+    paper's core concepts and how they relate across the cluster 
     surfacing connections, contradictions, and open questions that build on
-    existing work rather than repeating it.
+    existing work.
   </p>
   <ul>
     <li>
@@ -298,7 +293,7 @@ export function AboutPage() {
 
   <h3 className="about-subsection-title">Flow 3: Topic-Scale Exploration</h3>
   <p>
-    The same idea extended to hundreds of papers on a broad topic — for
+    The same idea extended to hundreds of papers on a broad topic. For
     example, large language models. At that scale, natural subtopic
     clusters emerge on their own (attention mechanisms, tokenization
     strategies, parsing algorithms), visualized the same way as Flow 2's
