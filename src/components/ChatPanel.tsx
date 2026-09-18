@@ -4,6 +4,8 @@ export interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
   text: string
+  tokensUsed?: number
+  totalTokens?: number
 }
 
 interface ChatPanelProps {
@@ -30,7 +32,27 @@ export function ChatPanel({ messages, input, onInputChange, onSend, onTest }: Ch
           messages.map((message) => (
             <div key={message.id} className={`chat-bubble ${message.role}`}>
               {message.role === 'assistant' ? (
-                <ReactMarkdown>{message.text}</ReactMarkdown>
+                <>
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                  {message.totalTokens ? (
+                    <div className="token-stats">
+                      <span>
+                        Tokens used: {message.tokensUsed} · Saved:{' '}
+                        {message.totalTokens - (message.tokensUsed ?? 0)} · Total:{' '}
+                        {message.totalTokens}
+                      </span>
+                      <span className="token-info-icon" tabIndex={0}>
+                        !
+                        <span className="token-info-tooltip">
+                          Tokens used is the size of the passages retrieved from the
+                          paper to answer this question. Saved is the difference
+                          between that and the paper's total token count which is roughly
+                          what a full-paper approach would have cost instead.
+                        </span>
+                      </span>
+                    </div>
+                  ) : null}
+                </>
               ) : (
                 message.text
               )}
