@@ -68,7 +68,7 @@ export function PapersSidebar({
           {papers.length > 0 && (
             <>
               <button className="run-button" onClick={onRun} disabled={isSubmitting}>
-                {isSubmitting ? 'Running...' : 'Run'}
+                {isSubmitting ? 'Running...' : 'Chunk PDF'}
               </button>
               {error && <p className="error-text">{error}</p>}
             </>
