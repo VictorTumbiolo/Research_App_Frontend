@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Libre+Franklin:wght@400;500;600&display=swap');
+
+:root {
+  --beige-wall: #ddc8a1;
+  --beige-wall-deep: #c9ae7e;
+  --glass-tint: rgba(250, 243, 227, 0.5);
+  --glass-tint-strong: rgba(250, 243, 227, 0.68);
+  --glass-edge: rgba(255, 255, 255, 0.55);
+  --coffee-dark: #3b2a1e;
+  --coffee-mid: #6b4226;
+  --brass: #a9793b;
+  --brass-soft: rgba(169, 121, 59, 0.35);
+  --cream-paper: #f5ecd9;
+  --text-ink: #33241a;
+  --muted-ink: #86735c;
+  --error: #a3402c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  max-width: none;
+  min-height: 100vh;
+  border-inline: none;
+  text-align: left;
+  display: block;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  letter-spacing: normal;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12) 0, transparent 45%),
+    linear-gradient(160deg, var(--beige-wall) 0%, var(--beige-wall-deep) 100%);
+  color: var(--text-ink);
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+/* Header reads as a hanging awning over a shop window */
+.app-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1.5rem;
+  background: var(--coffee-dark);
+  box-shadow: inset 0 -3px 0 var(--brass);
+}
+
+.app-header::before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(169, 121, 59, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.app-header-text h1 {
+  margin: 0 0 0 2.4rem;
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  color: var(--cream-paper);
+}
+
+.app-header-text p {
+  margin: 0.1rem 0 0 2.4rem;
+  color: #c7ac8a;
+  font-size: 0.72rem;
+}
+
+.about-button {
+  flex-shrink: 0;
+  padding: 0.65rem 1.4rem;
+  background: transparent;
+  color: var(--cream-paper);
+  border: 1px solid var(--brass);
+  border-radius: 6px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.about-button:hover {
+  background: var(--brass);
+  color: var(--coffee-dark);
+}
+
+.about-button:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+/* Main area is the window frame; the beige wall shows as the mullion */
+.app-main {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  padding: 3px 3px 0;
+  overflow: hidden;
+}
+
+/* Shared glass-pane treatment, reused by chat/papers/viewer panels */
+.chat-panel,
+.details-panel,
+.paper-viewer-panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--glass-tint);
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+
+.chat-panel::before,
+.details-panel::before,
+.paper-viewer-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0) 22%,
+    rgba(255, 255, 255, 0) 78%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+.placeholder-text {
+  color: var(--muted-ink);
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .app-main {
+    flex-direction: column;
+  }
+
+  .chat-panel,
+  .details-panel,
+  .paper-viewer-panel {
+    border-radius: 10px;
+  }
+
+  .paper-viewer-panel {
+    max-height: 45vh;
+  }
+}

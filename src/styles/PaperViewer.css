@@ -1,0 +1,101 @@
+/* Paper viewer panel -- the open book on the left */
+.paper-viewer-panel {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: 10px 10px 0 0;
+  border-top: 1px solid var(--glass-edge);
+}
+
+/* Iframes swallow mouse events, which would break a drag mid-motion --
+   disable pointer events on it while the handle is being dragged. */
+.paper-viewer-panel.resizing .paper-viewer-body iframe {
+  pointer-events: none;
+}
+
+/* Draggable seam between the paper viewer and the chat panel */
+.resize-handle {
+  flex: 0 0 6px;
+  align-self: stretch;
+  cursor: col-resize;
+  position: relative;
+}
+
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 36px;
+  border-radius: 3px;
+  background: var(--brass-soft);
+  transition: background 0.15s ease;
+}
+
+.resize-handle:hover::after,
+.resize-handle.active::after {
+  background: var(--brass);
+}
+
+.paper-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--brass-soft);
+  background: rgba(59, 42, 30, 0.05);
+}
+
+.paper-viewer-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--coffee-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.paper-viewer-close {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brass);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--coffee-dark);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.paper-viewer-close:hover {
+  background: var(--coffee-dark);
+  color: var(--cream-paper);
+}
+
+.paper-viewer-close:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+.paper-viewer-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.paper-viewer-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #fff;
+}
